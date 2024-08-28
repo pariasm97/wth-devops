@@ -19,9 +19,22 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Elimina los pasos personalizados de CodeQL
-
-    - name: Run Dependabot
-      uses: dependabot/fetch-metadata@v1.3.1
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
       with:
-        github-token: "${{ secrets.GITHUB_TOKEN }}"
+        languages: javascript  
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+  dependabot:
+    name: 'Dependabot'
+    needs: analyze
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.3.1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
